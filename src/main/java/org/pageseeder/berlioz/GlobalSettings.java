@@ -170,7 +170,10 @@ public final class GlobalSettings {
   }
 
   /**
-   * @return The configuration directory containing all configuration files for Berlioz.
+   * @note: If the appData is different of webInf then maybe the mode config could be in other folder. Therefore in this 
+   * case should be worth to check in {appData}/config
+   * 
+   * @return The configuration directory containing all configuration files for Berlioz. 
    */
   public static File getConfig() {
     if (env != null)
@@ -226,8 +229,12 @@ public final class GlobalSettings {
    * @return The properties file to load or <code>null</code>.
    */
   public static @Nullable File getModeConfigFile() {
-    if (env == null) return null;
-    File f = getModeConfigFile(getConfig());
+    if (env == null) return null; 
+    File appDataConfigDirectory = env.appData().toPath().resolve(env.configFolder()).toFile();      
+    File f = getModeConfigFile(appDataConfigDirectory);
+    if (f == null || !f.exists()) {
+      f = getModeConfigFile(getConfig());
+    }    
     return f;
   }
 
